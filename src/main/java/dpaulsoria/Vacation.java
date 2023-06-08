@@ -4,23 +4,26 @@ package dpaulsoria;
  * Clase que representa unas vacaciones.
  */
 public class Vacation {
-  private double base;
-  private String destination;
-  private double duration;
-  private double numberTravelers;
+  private final double costoBase;
+  private final String destino;
+  private final double duracion;
+  private final double cantidadViajeros;
+  private final double odd;
 
   /**
    * Crea un objeto Vacation con el destino, duración y cantidad de viajeros especificados.
    *
-   * @param destination     el destino del viaje.
-   * @param duration        la duración del viaje en días.
-   * @param numberTravelers la cantidad de viajeros.
+   * @param destino          el destino del viaje.
+   * @param duracion         la duración del viaje en días.
+   * @param cantidadViajeros la cantidad de viajeros.
+   * @param odd              el valor adicional para el costo.
    */
-  public Vacation(String destination, double duration, double numberTravelers) {
-    this.base = 1000;
-    this.destination = destination;
-    this.duration = duration;
-    this.numberTravelers = numberTravelers;
+  public Vacation(String destino, double duracion, double cantidadViajeros, double odd) {
+    this.costoBase = 1000;
+    this.destino = destino;
+    this.duracion = duracion;
+    this.cantidadViajeros = cantidadViajeros;
+    this.odd = odd;
   }
 
   /**
@@ -28,12 +31,13 @@ public class Vacation {
    *
    * @return el costo total de las vacaciones, o -1 si el número de viajeros es mayor o igual a 80.
    */
-  public double calculateVacation() {
-    if (numberTravelers < 80) {
-      double totalWithDestination = calculateDestination(base, destination);
-      double totalWithNumTravelers = calcNumTrav(totalWithDestination, numberTravelers);
-      double totalWithDuration = calcDur(totalWithNumTravelers, duration, numberTravelers);
-      return totalWithDuration;
+  public double calcularCostoVacaciones() {
+    if (cantidadViajeros < 80) {
+      double totalConDestino = calcularCostoDestino(costoBase, destino);
+      double tcv = calcularCostoViajeros(totalConDestino, cantidadViajeros);
+      double totalConDuracion = calcularCostoDuracion(tcv, duracion, cantidadViajeros);
+      double totalOdd = calcularCostoOdd(totalConDuracion, odd);
+      return totalOdd;
     } else {
       return -1;
     }
@@ -42,81 +46,68 @@ public class Vacation {
   /**
    * Calcula el costo adicional según el destino seleccionado.
    *
-   * @param base        el costo base actual.
-   * @param destination el destino seleccionado.
+   * @param costoBase el costo base actual.
+   * @param destino   el destino seleccionado.
    * @return el costo total con el adicional del destino.
    */
-  private double calculateDestination(double base, String destination) {
-    if (destination.equals("Paris")) {
-      return base + 500;
-    } else if (destination.equals("New York City")) {
-      return base + 600;
+  private double calcularCostoDestino(double costoBase, String destino) {
+    if ("París".equals(destino)) {
+      return costoBase + 500;
+    } else if ("Nueva York".equals(destino)) {
+      return costoBase + 600;
     }
-    return base;
+    return costoBase;
   }
 
   /**
    * Calcula el costo adicional según la cantidad de viajeros.
    *
-   * @param base           el costo base actual.
-   * @param numberTravelers la cantidad de viajeros.
+   * @param costoBase        el costo base actual.
+   * @param cantidadViajeros la cantidad de viajeros.
    * @return el costo total con el adicional de la cantidad de viajeros.
    */
-  private double calcNumTrav(double base, double numberTravelers) {
-    if (numberTravelers > 4 && duration < 10) {
-      return (base + base * 0.1);
-    } else if (numberTravelers > 20) {
-      return (base + base * 0.2);
+  private double calcularCostoViajeros(double costoBase, double cantidadViajeros) {
+    if (cantidadViajeros > 4 && duracion < 10) {
+      return costoBase + costoBase * 0.1;
+    } else if (cantidadViajeros > 20) {
+      return costoBase + costoBase * 0.2;
     }
-    return base;
+    return costoBase;
   }
 
   /**
    * Calcula el costo adicional según la duración del viaje.
    *
-   * @param base           el costo base actual.
-   * @param duration       la duración del viaje en días.
-   * @param numberTravelers la cantidad de viajeros.
+   * @param costoBase        el costo base actual.
+   * @param duracion         la duración del viaje en días.
+   * @param cantidadViajeros la cantidad de viajeros.
    * @return el costo total con el adicional de la duración del viaje.
    */
-  private double calcDur(double base, double duration, double numberTravelers) {
-    if (duration < 7) {
-      return (base + 200);
-    } else if (duration > 30 || numberTravelers == 2) {
-      return (base - 200);
+  private double calcularCostoDuracion(double costoBase, double duracion, double cantidadViajeros) {
+    if (duracion < 7) {
+      return costoBase + 200;
+    } else if (duracion > 30 || cantidadViajeros == 2) {
+      return costoBase - 200;
     }
-    return base;
+    return costoBase;
   }
 
-  public Double getBase() {
-    return base;
-  }
-
-  public void setBase(Double base) {
-    this.base = base;
-  }
-
-  public String getDestination() {
-    return destination;
-  }
-
-  public void setDestination(String destination) {
-    this.destination = destination;
-  }
-
-  public Double getDuration() {
-    return duration;
-  }
-
-  public void setDuration(Double duration) {
-    this.duration = duration;
-  }
-
-  public Double getNumberTravelers() {
-    return numberTravelers;
-  }
-
-  public void setNumberTravelers(Double numberTravelers) {
-    this.numberTravelers = numberTravelers;
+  /**
+   * Calcula el costo adicional según el valor adicional especificado.
+   *
+   * @param costoBase el costo base actual.
+   * @param odd       el valor adicional especificado.
+   * @return el costo total con el adicional especificado.
+   */
+  private double calcularCostoOdd(double costoBase, double odd) {
+    if (odd == 1) {
+      return costoBase + 200;
+    } else if (odd == 2) {
+      return costoBase + 150;
+    } else if (odd == 3) {
+      return costoBase + 100;
+    } else {
+      return costoBase;
+    }
   }
 }
